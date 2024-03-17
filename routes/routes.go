@@ -2,7 +2,7 @@ package routers
 
 import (
 	"database/sql"
-	"golang-API-save-data-sql/services"
+	"go_ride_backend-golang/services"
 
 	"github.com/gin-gonic/gin"
 )

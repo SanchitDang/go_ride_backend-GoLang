@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"golang-API-save-data-sql/models"
+	"go_ride_backend-golang/models"
 )
 
 // UserStoreData stores User data in the SQLite database.

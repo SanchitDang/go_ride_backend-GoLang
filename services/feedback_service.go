@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"golang-API-save-data-sql/models"
+	"go_ride_backend-golang/models"
 )
 
 // FeedbackStoreData stores feedback data in the SQLite database.
