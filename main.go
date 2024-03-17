@@ -1,91 +1,59 @@
 package main
 
 import (
-	routers "golang-API-save-data-sql/routes"
-	"log"
+    "fmt"
+    "net/http"
+    "os"
 
-	"database/sql"
-	"fmt"
-	"net/http"
-	"os"
-
-	"github.com/joho/godotenv"
-
-	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/spf13/viper"
+    "github.com/gin-gonic/gin"
+    "github.com/joho/godotenv"
+    "github.com/spf13/viper"
+
+    "golang-API-save-data-sql/database"
+    routers "golang-API-save-data-sql/routes"
 )
 
-var DB *sql.DB // Exported variable
-
 func main() {
-	loadConfig()
+    loadConfig()
 
-	if err := godotenv.Load(); err != nil {
-		fmt.Println("Error loading .env file")
-		os.Exit(1)
-	}
+    if err := godotenv.Load(); err != nil {
+        fmt.Println("Error loading .env file")
+        os.Exit(1)
+    }
 
-	// Open the SQLite database
-	var err error
-	DB, err = sql.Open(viper.GetString("database.driver"), viper.GetString("database.connection"))
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer DB.Close()
+    // Initialize the database
+    DB, err := database.InitializeDB()
+    if err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+    }
+    defer DB.Close()
 
-	// Create the users table if it doesn't exist
-	_, err = DB.Exec(`
-	CREATE TABLE IF NOT EXISTS users (
-		Name TEXT,
-		Email TEXT,
-		Phone TEXT
-		)
-	`)
-	if err != nil {
-		fmt.Println(err)
-		log.Fatal(err)
-		return
-	}
+    // Initialize Gin engine
+    r := gin.Default()
 
-	// Create the feedback table if it doesn't exist
-	_, err = DB.Exec(`
-		CREATE TABLE IF NOT EXISTS feedback (
-			Date TEXT,
-			Time TEXT,
-			Feedback TEXT
-		)
-	`)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	
-	// Initialize Gin engine
-	r := gin.Default()
+    // Setup routes
+    routers.SetupRoutes(r, DB)
 
-	// Setup routes
-	routers.SetupRoutes(r, DB)
+    // Start the server on the specified port in .env file
+    envFile, _ := godotenv.Read(".env")
+    port := envFile["port"]
 
-	// Start the server on the specified port in .env file
-	envFile, _ := godotenv.Read(".env")
-	port := envFile["port"]
+    fmt.Println("Server Started")
+    fmt.Println("Running at port: " + port)
 
-	fmt.Println("Server Started")
-	fmt.Println("Running at port: " + port)
-
-	http.Handle("/", r)
-	http.ListenAndServe(":"+port, nil)
+    http.Handle("/", r)
+    http.ListenAndServe(":"+port, nil)
 }
 
 func loadConfig() {
-	// Set the file name of the configuration file
-	viper.SetConfigFile("config.yaml")
+    // Set the file name of the configuration file
+    viper.SetConfigFile("config.yaml")
 
-	// Read the configuration file
-	if err := viper.ReadInConfig(); err != nil {
-		fmt.Println("Error reading config file:", err)
-		os.Exit(1)
-	}
+    // Read the configuration file
+    if err := viper.ReadInConfig(); err != nil {
+        fmt.Println("Error reading config file:", err)
+        os.Exit(1)
+    }
 }
