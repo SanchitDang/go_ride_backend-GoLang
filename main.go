@@ -9,15 +9,18 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/spf13/viper"
 
 	"go_ride_backend-golang/database"
+	"go_ride_backend-golang/initializers"
 	routers "go_ride_backend-golang/routes"
 )
 
-func main() {
-	loadConfig()
+func init() {
+	initializers.LoadEnvVariables()
+	initializers.ConnectToDB()
+}
 
+func main() {	
 	if err := godotenv.Load(); err != nil {
 		fmt.Println("Error loading .env file")
 		os.Exit(1)
@@ -46,15 +49,4 @@ func main() {
 
 	http.Handle("/", r)
 	http.ListenAndServe(":"+port, nil)
-}
-
-func loadConfig() {
-	// Set the file name of the configuration file
-	viper.SetConfigFile("config.yaml")
-
-	// Read the configuration file
-	if err := viper.ReadInConfig(); err != nil {
-		fmt.Println("Error reading config file:", err)
-		os.Exit(1)
-	}
 }
