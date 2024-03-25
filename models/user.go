@@ -10,7 +10,3 @@ type User struct {
 	Email string `json:"email"`
 	Phone string `json:"phone"`
 }
-
-func NewUser(name string, email string, phone string) *User {
-	return &User{}
-}

@@ -1,27 +1,18 @@
 package routers
 
 import (
-	"database/sql"
-	"go_ride_backend-golang/services"
+	"go_ride_backend-golang/controllers"
 
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRoutes(r *gin.Engine, db *sql.DB) {
+func SetupRoutes(r *gin.Engine) {
 
 	// User End points
-	r.POST("/post-user", func(c *gin.Context) {
-		services.PostUserData(c.Writer, c.Request, db)
-	})
-	r.GET("/get-user", func(c *gin.Context) {
-		services.GetUserData(c.Writer, c.Request, db)
-	})
+	r.GET("/get-all-users", controllers.GetAllUsersData)
+	r.GET("/get-user/:id", controllers.GetUserDataById)
+	r.POST("/post-user", controllers.PostUserData)
+	r.PUT("/update-user/:id", controllers.UpdateUserData)
+	r.DELETE("/delete-user/:id", controllers.DeleteUserData)
 
-	// Feedback(Rating) End points
-	r.POST("/post-feedback", func(c *gin.Context) {
-		services.PostFeedback(c.Writer, c.Request, db)
-	})
-	r.GET("/get-feedback", func(c *gin.Context) {
-		services.GetFeedback(c.Writer, c.Request, db)
-	})
 }

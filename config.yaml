@@ -1,3 +1,1 @@
-database:
-  driver: sqlite3
-  connection: GoRide.db
+

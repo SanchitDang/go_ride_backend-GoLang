@@ -6,7 +6,3 @@ type Driver struct {
 	Email string `json:"email"`
 	Phone string `json:"phone"`
 }
-
-func NewDriver(name string, email string, phone string) *Driver {
-	return &Driver{name, email, phone}
-}

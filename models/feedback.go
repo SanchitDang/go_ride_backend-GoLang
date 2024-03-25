@@ -6,7 +6,3 @@ type Feedback struct {
 	Time     string `json:"time"`
 	Feedback string `json:"feedback"`
 }
-
-func NewFeedback(date string, time string, feedback string) *Feedback {
-	return &Feedback{date, time, feedback}
-}
